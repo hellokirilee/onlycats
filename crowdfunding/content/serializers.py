@@ -23,7 +23,7 @@ class ContentSerializer(serializers.Serializer):
     image = serializers.URLField()
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
-    owner = serializers.CharField(max_length=200)
+    owner = serializers.ReadOnlyField(source='owner.id')
     pledges = PledgeSerializer(many=True, read_only=True)
 
 
@@ -32,3 +32,13 @@ class ContentSerializer(serializers.Serializer):
 
 class ContentDetailSerializer(ContentSerializer):
     pledges = PledgeSerializer(many=True, read_only=True)
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.goal = validated_data.get('goal', instance.goal)
+        instance.image = validated_data.get('image', instance.image)
+        instance.is_open = validated_data.get('is_open', instance.is_open)
+        instance.date_created = validated_data.get('date_created', instance.date_created)
+        instance.owner = validated_data.get('ownder', instance.owner)
+        instance.save()
+        return instance
