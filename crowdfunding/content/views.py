@@ -50,7 +50,7 @@ class ProjectDetail(APIView):
     def put(self, request, pk):
         project = self.get_object(pk)
         data = request.data
-        serializer = ProjectDetailSerializer(
+        serializer = ContentDetailSerializer(
             instance=project,
             data=data,
             partial=True
