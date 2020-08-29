@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from .models import Project, Pledge
 
-
-
 class PledgeSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     amount = serializers.IntegerField()
@@ -14,7 +12,7 @@ class PledgeSerializer(serializers.Serializer):
     def create (self, validated_data):
         return Pledge.objects.create(**validated_data)
 
-
+#ProjectSerializer
 class ContentSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     title = serializers.CharField(max_length=200)
@@ -29,7 +27,8 @@ class ContentSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return Project.objects.create(**validated_data)
-
+        
+#ProjectDetailSerializer
 class ContentDetailSerializer(ContentSerializer):
     pledges = PledgeSerializer(many=True, read_only=True)
     def update(self, instance, validated_data):
