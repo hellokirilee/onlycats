@@ -5,7 +5,6 @@ from django.shortcuts import render
 from users.models import UserProfile
 
 
-
 class Category(models.Model):
     category = models.CharField(max_length=30, unique=True, primary_key=True)
     def __str__(self):
@@ -19,6 +18,7 @@ class Project(models.Model):
     image = models.URLField()
     is_open = models.BooleanField()
     date_created = models.DateTimeField()
+    date_released = models.DateTimeField(null=True)
     owner = models.ForeignKey(
     "users.UserProfile",
     on_delete=models.CASCADE,
@@ -28,6 +28,16 @@ class Project(models.Model):
         Category,
         on_delete=models.CASCADE,
         null = True)
+
+class ImageLibrary(models.Model):
+    content_img_name = models.CharField(max_length=200)
+    content_img = models.URLField(max_length = 200, verbose_name = 'Content Image URL')
+    project = models.ForeignKey(
+    'Project',
+    on_delete=models.CASCADE,
+    related_name='images'
+
+)
 
 
 class Pledge(models.Model):
