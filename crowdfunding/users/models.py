@@ -10,7 +10,7 @@ class CustomUser(AbstractUser):
 
 class UserProfile(models.Model):  
     user = models.OneToOneField(
-        CustomUser, on_delete = models.CASCADE)
+        CustomUser, on_delete=models.CASCADE, related_name='profile')
     profile_image_url = models.URLField(max_length = 200, verbose_name = 'Profile Image URL')
     user_bio = models.TextField(max_length = 100, verbose_name = 'Catent Creator Bio')
     

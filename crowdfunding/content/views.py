@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from .models import Project, Pledge
+from .models import Category, Project, Pledge
 from .serializers import (
     ContentSerializer, PledgeSerializer, ContentDetailSerializer,
     SupporterContentDetailSerializer
@@ -18,6 +18,17 @@ class ProjectList(APIView):
     
     def get(self, request):
         projects = Project.objects.all()
+        
+        # Filtering
+        user = request.query_params.get('user')
+        if user is not None:
+            projects = projects.filter(owner__user__username=user)
+
+        category = request.query_params.get('category')
+        if category is not None:
+            projects = projects.filter(category__category__iexact=category)
+        
+        
         serializer = ContentSerializer(projects, many=True)
         return Response(serializer.data)
 
