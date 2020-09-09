@@ -5,7 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from .models import Project, Pledge
-from .serializers import ContentSerializer, PledgeSerializer, ContentDetailSerializer
+from .serializers import (
+    ContentSerializer, PledgeSerializer, ContentDetailSerializer,
+    SupporterContentDetailSerializer
+)
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -22,14 +25,13 @@ class ProjectList(APIView):
         serializer = ContentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
-        return Response(
-            serializer.data,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
-        
         )
 
 class ProjectDetail(APIView):
@@ -39,12 +41,12 @@ class ProjectDetail(APIView):
             return Project.objects.get(pk=pk)
         except Project.DoesNotExist:
             raise Http404
-        # project = self.get_object(pk)
-        # serializer = ContentSerializer(project)
-        # return Response(serializer.data)
+        
     def get(self, request, pk):
         project = self.get_object(pk)
-        serializer = ContentDetailSerializer(project)
+        is_supporter = project.pledges.filter(supporter=request.user).exists()
+        serializer_class = SupporterContentDetailSerializer if is_supporter else ContentDetailSerializer
+        serializer = serializer_class(project)
         return Response(serializer.data)
 
     def put(self, request, pk):
@@ -57,6 +59,14 @@ class ProjectDetail(APIView):
         )
         if serializer.is_valid():
             serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 class PledgeList(APIView):
 
