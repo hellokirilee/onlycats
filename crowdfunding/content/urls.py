@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
     path('content/<int:pk>/', views.ProjectDetail.as_view()),
     path('content/', views.ProjectList.as_view()),
-    path('pledges', views.PledgeList.as_view())
+    path('pledges/', views.PledgeList.as_view())
 ]

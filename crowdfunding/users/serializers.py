@@ -27,7 +27,7 @@ class CustomUserSerializer(serializers.Serializer):
         instance.save()
 
         if not hasattr(instance, 'profile'):
-            # Create profile
+            # Create pro
             UserProfile.objects.create(**profile, user=instance)
         else:
             instance.profile.user_bio = profile.get('user_bio', instance.profile.user_bio)
@@ -36,3 +36,7 @@ class CustomUserSerializer(serializers.Serializer):
             instance.profile.save()
 
         return instance
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=200)
+    password = serializers.CharField(write_only=True, max_length=100)

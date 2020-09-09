@@ -10,6 +10,12 @@ class PledgeSerializer(serializers.Serializer):
     supporter = serializers.ReadOnlyField(source='supporter.username')
     project_id = serializers.IntegerField()
 
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Value must be positive")
+        return value
+
+
     def create (self, validated_data):
         return Pledge.objects.create(**validated_data)
 

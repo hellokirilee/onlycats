@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status, permissions, exceptions
 from .models import Category, Project, Pledge
 from .serializers import (
     ContentSerializer, PledgeSerializer, ContentDetailSerializer,
@@ -79,6 +79,16 @@ class ProjectDetail(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    def delete(self, request, pk):
+        project = self.get_object(pk)
+        if not request.user.is_staff:
+            raise exceptions.PermissionDenied()
+        
+        project.delete()
+        return Response(status=status.HTTP_200_OK)
+
+        
+
 class PledgeList(APIView):
 
     def get (self, request):
@@ -89,7 +99,7 @@ class PledgeList(APIView):
     def post(self,request):
         serializer = PledgeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(supporter=request.user)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED

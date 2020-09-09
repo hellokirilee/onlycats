@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # os.environ.get('DJANGO_DEBUG', '') !='False'
+DEBUG = os.environ.get('DJANGO_DEBUG', '') !='False'
 #change to true - comment out to rest to debug locally
 
 
@@ -52,10 +52,12 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-    'rest_framework.authentication.TokenAuthentication',
-    #Allows testing on page not just insomnia 
-    'rest_framework.authentication.SessionAuthentication',
-    #'rest_framework.permissions.IsAuthenticated'
+        'rest_framework.authentication.TokenAuthentication',
+        # Allows testing on page not just insomnia 
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
     ]
 }
 

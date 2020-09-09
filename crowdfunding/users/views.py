@@ -3,8 +3,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, LoginSerializer
 
 
 class CustomUserList(APIView):
@@ -60,15 +61,33 @@ class CreateUser(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-# class Login(APIView):
-#     permission_classes = [AllowAny]
+class Login(APIView):
+    permission_classes = [AllowAny]
 
-#     def post(self, request):
-#         serializer = CustomUserSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(
-#             serializer.errors,
-#             status=status.HTTP_400_BAD_REQUEST
-#         )
+    def get_object(self, username):
+        try:
+            return CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            raise Http404
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+
+        user = self.get_object(username)
+        if not user.check_password(password):
+            return Response(
+                {"error": "Incorrect password"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key})
