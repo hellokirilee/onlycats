@@ -83,6 +83,7 @@ class Login(APIView):
         password = serializer.validated_data['password']
 
         user = self.get_object(username)
+
         if not user.check_password(password):
             return Response(
                 {"error": "Incorrect password"},
@@ -90,4 +91,8 @@ class Login(APIView):
             )
 
         token, created = Token.objects.get_or_create(user=user)
-        return Response({"token": token.key})
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'is_staff': user.is_staff,
+            })
