@@ -12,12 +12,10 @@ class CustomUserSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=200)
     profile = ProfileSerializer(required=False)
     password = serializers.CharField(write_only=True, max_length=100)
+    is_staff = serializers.ReadOnlyField()
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = CustomUser.objects.create(**validated_data)
-        user.set_password(password)
-        user.save()
+        user = CustomUser.objects.create_user(**validated_data)
         return user
 
     def update(self, instance, validated_data):

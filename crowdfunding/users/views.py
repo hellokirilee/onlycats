@@ -1,4 +1,5 @@
 from django.http import Http404
+from rest_framework import serializers
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -54,8 +55,11 @@ class CreateUser(APIView):
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            user = serializer.save()
+            json = serializer.data
+            token, created = Token.objects.get_or_create(user=user)
+            json['token'] = token.key
+            return Response(json)
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
