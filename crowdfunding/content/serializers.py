@@ -20,6 +20,7 @@ class PledgeSerializer(serializers.Serializer):
         return Pledge.objects.create(**validated_data)
 
 class OwnerSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField(source='user.id')
     username = serializers.ReadOnlyField(source='user.username')
     profile_image_url = serializers.URLField()
     user_bio = serializers.CharField(max_length=200)
