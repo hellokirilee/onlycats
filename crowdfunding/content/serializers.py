@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, Pledge, Category
+from .models import Project, Pledge, Category, ImageLibrary
 from django.db.models import Sum
 
 class PledgeSerializer(serializers.Serializer):
@@ -58,6 +58,9 @@ class ContentDetailSerializer(ContentSerializer):
 class ImageSerializer(serializers.Serializer):
     content_img_name = serializers.CharField(max_length=200)
     content_img = serializers.URLField()
+
+    def create(self, validated_data):
+        return ImageLibrary.objects.create(**validated_data)
 
 class SupporterContentDetailSerializer(ContentDetailSerializer):
     images = ImageSerializer(many=True)

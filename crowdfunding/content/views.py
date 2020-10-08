@@ -7,7 +7,7 @@ from rest_framework import status, permissions, exceptions
 from .models import Category, Project, Pledge
 from .serializers import (
     ContentSerializer, PledgeSerializer, ContentDetailSerializer,
-    SupporterContentDetailSerializer
+    SupporterContentDetailSerializer, ImageSerializer
 )
 from .permissions import IsOwnerOrReadOnly
 
@@ -100,6 +100,29 @@ class PledgeList(APIView):
         serializer = PledgeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(supporter=request.user)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        
+        return Response(
+            serializer.errors,
+            status = status.HTTP_400_BAD_REQUEST
+        )
+
+class OwnerImageLibrary(APIView):
+
+    def get_object(self,pk):
+        try:
+            return Project.objects.get(pk=pk)
+        except Project.DoesNotExist:
+            raise Http404
+
+    def post(self, request, pk):
+        project = self.get_object(pk)
+        serializer = ImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(project=project)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
