@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
-from .serializers import CustomUserSerializer, LoginSerializer
+from .serializers import CustomUserSerializer, LoginSerializer, CustomUserDetailSerializer
 
 
 class CustomUserList(APIView):
@@ -26,7 +26,7 @@ class CustomUserDetail(APIView):
 
     def get(self, request, pk):
         user = self.get_object(pk)
-        serializer = CustomUserSerializer(user)
+        serializer = CustomUserDetailSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, pk):

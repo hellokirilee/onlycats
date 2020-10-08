@@ -2,7 +2,6 @@ from typing import cast
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import render
-from users.models import UserProfile
 
 
 class Category(models.Model):

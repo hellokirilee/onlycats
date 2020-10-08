@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser, UserProfile
+from ..content.serializers import ContentSerializer
 
 class ProfileSerializer(serializers.Serializer):
     profile_image_url = serializers.URLField()
@@ -34,6 +35,9 @@ class CustomUserSerializer(serializers.Serializer):
             instance.profile.save()
 
         return instance
+
+class CustomUserDetailSerializer(CustomUserSerializer):
+    owner_projects = ContentSerializer(source="profile.owner_projects", many=True, read_only=True)
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=200)
