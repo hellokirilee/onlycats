@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser, UserProfile
-from ..content.serializers import ContentSerializer
+from content.serializers import ContentSerializer
 
 class ProfileSerializer(serializers.Serializer):
     profile_image_url = serializers.URLField()
