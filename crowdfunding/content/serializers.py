@@ -33,7 +33,7 @@ class ContentSerializer(serializers.Serializer):
     image = serializers.URLField()
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
-    owner = OwnerSerializer()
+    owner = OwnerSerializer(read_only=True)
     category = serializers.SlugRelatedField('category', queryset=Category.objects.all())
 
     def create(self, validated_data):
